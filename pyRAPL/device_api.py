@@ -77,8 +77,7 @@ class DeviceAPI:
         self._socket_ids.sort()
 
         self._sys_files = self._open_rapl_files()
-        self.wraparound = self._get_wraparound_values()
-        print(self.wraparound)
+        self._get_wraparound_values()
 
     def _open_rapl_files(self):
         raise NotImplementedError()
