@@ -151,6 +151,7 @@ class PkgAPI(DeviceAPI):
     def _get_wraparound_values(self):
         directory_name_list = self._get_socket_directory_names()
 
+        self.wraparound = []
         for directory_name, _ in directory_name_list:
             with open(directory_name + "/max_energy_range_uj", "r") as f:
                 f.seek(0, 0)
@@ -190,6 +191,7 @@ class DramAPI(DeviceAPI):
             socket_directory_name,
             rapl_socket_id,
         ):
+            self.wraparound = []
             rapl_device_id = 0
             while os.path.exists(
                 socket_directory_name
