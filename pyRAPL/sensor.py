@@ -84,4 +84,4 @@ class Sensor:
         return result
 
     def wraparound(self) -> list[int]:
-        return [device.wraparound[0] for device in self._available_devices]
+        return [self._device_api[device].wraparound[0] for device in self._available_devices]
