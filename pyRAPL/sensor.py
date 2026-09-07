@@ -82,3 +82,6 @@ class Sensor:
             for socket_id in range(len(energy)):
                 result[socket_id * 2 + device] = energy[socket_id]
         return result
+
+    def wraparound(self) -> list[int]:
+        return [device.wraparound[0] for device in self._available_devices]

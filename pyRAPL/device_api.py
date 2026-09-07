@@ -77,8 +77,12 @@ class DeviceAPI:
         self._socket_ids.sort()
 
         self._sys_files = self._open_rapl_files()
+        self.wraparound = self._get_wraparound_values()
 
     def _open_rapl_files(self):
+        raise NotImplementedError()
+
+    def _get_wraparound_values(self):
         raise NotImplementedError()
 
     def _get_socket_directory_names(self) -> List[Tuple[str, int]]:
@@ -144,6 +148,15 @@ class PkgAPI(DeviceAPI):
             rapl_files.append(open(directory_name + '/energy_uj', 'r'))
         return rapl_files
 
+    def _get_wraparound_values(self):
+        directory_name_list = self._get_socket_directory_names()
+
+        for directory_name, _ in directory_name_list:
+            with open(directory_name + "/max_energy_range_uj", "r") as f:
+                f.seek(0, 0)
+                self.wraparound.append(float(f.readline()))
+
+
 
 class DramAPI(DeviceAPI):
 
@@ -170,11 +183,45 @@ class DramAPI(DeviceAPI):
 
         return rapl_files
 
+    def _get_wraparound_values(self):
+        directory_name_list = self._get_socket_directory_names()
+
+        def get_dram_file(
+            socket_directory_name,
+            rapl_socket_id,
+        ):
+            rapl_device_id = 0
+            while os.path.exists(
+                socket_directory_name
+                + "/intel-rapl:"
+                + str(rapl_socket_id)
+                + ":"
+                + str(rapl_device_id)
+            ):
+                dirname = (
+                    socket_directory_name
+                    + "/intel-rapl:"
+                    + str(rapl_socket_id)
+                    + ":"
+                    + str(rapl_device_id)
+                )
+                f_device = open(dirname + "/name", "r")
+                if f_device.readline() == "dram\n":
+                    with open(dirname + "/max_energy_range_uj", "r") as f:
+                        f.seek(0, 0)
+                        return float(f.readline())
+                rapl_device_id += 1
+            raise PyRAPLCantInitDeviceAPI()
+
+        for socket_directory_name, rapl_socket_id in directory_name_list:
+            self.wraparound.append(get_dram_file(socket_directory_name, rapl_socket_id)))
+
 
 class DeviceAPIFactory:
     """
     Factory Returning DeviceAPI
     """
+
     @staticmethod
     def create_device_api(device: Device, socket_ids: Optional[int]) -> DeviceAPI:
         """
