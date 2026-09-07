@@ -214,7 +214,7 @@ class DramAPI(DeviceAPI):
             raise PyRAPLCantInitDeviceAPI()
 
         for socket_directory_name, rapl_socket_id in directory_name_list:
-            self.wraparound.append(get_dram_file(socket_directory_name, rapl_socket_id)))
+            self.wraparound.append(get_dram_file(socket_directory_name, rapl_socket_id))
 
 
 class DeviceAPIFactory:
