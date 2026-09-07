@@ -78,7 +78,6 @@ class DeviceAPI:
 
         self._sys_files = self._open_rapl_files()
         self._get_wraparound_values()
-        print(self.wraparound)
 
     def _open_rapl_files(self):
         raise NotImplementedError()

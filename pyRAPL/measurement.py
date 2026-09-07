@@ -78,6 +78,8 @@ class Measurement:
 
         delta = energy_end - self._energy_begin
         def wraparound_adjustment(e, w):
+            print(e)
+            print(w)
             if e < 0:
                 print("adjusting negative value %d", e)
                 return e + w
