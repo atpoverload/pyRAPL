@@ -191,7 +191,6 @@ class DramAPI(DeviceAPI):
             socket_directory_name,
             rapl_socket_id,
         ):
-            self.wraparound = []
             rapl_device_id = 0
             while os.path.exists(
                 socket_directory_name
@@ -215,6 +214,7 @@ class DramAPI(DeviceAPI):
                 rapl_device_id += 1
             raise PyRAPLCantInitDeviceAPI()
 
+        self.wraparound = []
         for socket_directory_name, rapl_socket_id in directory_name_list:
             self.wraparound.append(get_dram_file(socket_directory_name, rapl_socket_id))
 
