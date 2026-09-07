@@ -77,7 +77,14 @@ class Measurement:
         energy_end = self._sensor.energy()
 
         delta = energy_end - self._energy_begin
-        delta = [(e + w) if e < 0 else e for e, w in zip(delta, self._sensor.wraparound())]
+        def wraparound_adjustment(e, w):
+            if e < 0:
+                print("adjusting negative value %d", e)
+                return e + w
+            else:
+                return e
+
+        delta = list(map(wraparound_adjustment, zip(delta, self._sensor.wraparound())))
         duration = ts_end - self._ts_begin
         pkg = delta[0::2]  # get odd numbers
         pkg = pkg if empty_energy_result(pkg) else None  # set result to None if its contains only -1
